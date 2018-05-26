@@ -25,7 +25,7 @@ func (a *API) ListTeamsHandler(c echo.Context) error {
 
 // GetTeamHandler will get a single team for the given id.
 func (a *API) GetTeamHandler(c echo.Context) error {
-	id := c.Param("teamId")
+	id := c.Param("id")
 	if id == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid team id")
 	}
@@ -76,7 +76,7 @@ func (a *API) UpdateTeamHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	t.ID = c.Param("teamId")
+	t.ID = c.Param("id")
 	m := models.NewTeamModel(a.appContext.DB)
 
 	// check entity exists
@@ -98,7 +98,7 @@ func (a *API) UpdateTeamHandler(c echo.Context) error {
 
 // DeleteTeam will delete the team from the database.
 func (a *API) DeleteTeamHandler(c echo.Context) error {
-	id := c.Param("teamId")
+	id := c.Param("id")
 	m := models.NewTeamModel(a.appContext.DB)
 	if _, err := m.GetByID(id); err != nil {
 		if err == gorm.ErrRecordNotFound {

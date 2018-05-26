@@ -24,9 +24,15 @@ func New(c *context.AppContext) *echo.Echo {
 
 	e.GET("/teams", a.ListTeamsHandler)
 	e.POST("/teams", a.CreateTeamHandler)
-	e.GET("/teams/:teamId", a.GetTeamHandler)
-	e.PUT("/teams/:teamId", a.UpdateTeamHandler)
-	e.DELETE("/teams/:teamId", a.DeleteTeamHandler)
+	e.GET("/teams/:id", a.GetTeamHandler)
+	e.PUT("/teams/:id", a.UpdateTeamHandler)
+	e.DELETE("/teams/:id", a.DeleteTeamHandler)
+
+	e.GET("/users", a.ListUsersHandler)
+	e.POST("/users", a.CreateUserHandler)
+	e.GET("/users/:id", a.GetUserHandler)
+	e.PUT("/users/:id", a.UpdateUserHandler)
+	e.DELETE("/users/:id", a.DeleteUserHandler)
 
 	return e
 }

@@ -10,43 +10,42 @@ import (
 
 	"github.com/cubixle/accounts/internal/api"
 	"github.com/cubixle/accounts/internal/models"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetTeams(t *testing.T) {
+func TestGetUsers(t *testing.T) {
 	ctx, tearDownDB := appContext()
 	defer tearDownDB()
 
 	e := api.New(ctx)
 
-	req := httptest.NewRequest(http.MethodGet, "/teams", nil)
+	req := httptest.NewRequest(http.MethodGet, "/users", nil)
 	rec := httptest.NewRecorder()
 
 	e.ServeHTTP(rec, req)
 	assert.Equal(t, http.StatusOK, rec.Code)
 }
 
-func TestGetTeam(t *testing.T) {
+func TestGetUser(t *testing.T) {
 	ctx, tearDownDB := appContext()
 	defer tearDownDB()
 
 	e := api.New(ctx)
 
-	teamRec := createTeam(e)
-	if !assert.Equal(t, http.StatusCreated, teamRec.Code) {
-		t.Fatal(teamRec.Body.String())
+	userRec := createUser(e)
+	if !assert.Equal(t, http.StatusCreated, userRec.Code) {
+		t.Fatal(userRec.Body.String())
 	}
 
-	team := new(models.Team)
-	err := json.Unmarshal(teamRec.Body.Bytes(), team)
+	User := new(models.User)
+	err := json.Unmarshal(userRec.Body.Bytes(), User)
 	if err != nil {
 		t.Fatal("WTF mate JSON failed")
 		return
 	}
 
-	req := httptest.NewRequest(http.MethodGet, "/teams/"+team.ID, nil)
+	req := httptest.NewRequest(http.MethodGet, "/users/"+User.ID, nil)
 	rec := httptest.NewRecorder()
 
 	e.ServeHTTP(rec, req)
@@ -55,45 +54,45 @@ func TestGetTeam(t *testing.T) {
 		return
 	}
 
-	foundTeam := new(models.Team)
-	json.Unmarshal(rec.Body.Bytes(), foundTeam)
+	foundUser := new(models.User)
+	json.Unmarshal(rec.Body.Bytes(), foundUser)
 
-	assert.NotEqual(t, foundTeam.Name, "")
+	assert.NotEqual(t, foundUser.Name, "")
 }
 
-func TestCreateTeam(t *testing.T) {
+func TestCreateUser(t *testing.T) {
 	ctx, tearDownDB := appContext()
 	defer tearDownDB()
 
 	e := api.New(ctx)
-	rec := createTeam(e)
+	rec := createUser(e)
 	if !assert.Equal(t, http.StatusCreated, rec.Code) {
 		t.Fatal(rec.Body.String())
 	}
 }
 
-func TestUpdateTeam(t *testing.T) {
+func TestUpdateUser(t *testing.T) {
 	ctx, tearDownDB := appContext()
 	defer tearDownDB()
 
 	e := api.New(ctx)
-	createRec := createTeam(e)
+	createRec := createUser(e)
 	if !assert.Equal(t, http.StatusCreated, createRec.Code) {
 		t.Fatal(createRec.Body.String())
 		return
 	}
 
-	team := new(models.Team)
-	json.Unmarshal(createRec.Body.Bytes(), team)
+	User := new(models.User)
+	json.Unmarshal(createRec.Body.Bytes(), User)
 
-	team.Name = "testing2"
-	teamBytes, err := json.Marshal(team)
+	User.Name = "testing2"
+	userBytes, err := json.Marshal(User)
 	if err != nil {
 		t.Fatal("")
 		return
 	}
 
-	req := httptest.NewRequest(http.MethodPut, "/teams/"+team.ID, bytes.NewBuffer(teamBytes))
+	req := httptest.NewRequest(http.MethodPut, "/users/"+User.ID, bytes.NewBuffer(userBytes))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	rec := httptest.NewRecorder()
@@ -104,15 +103,15 @@ func TestUpdateTeam(t *testing.T) {
 		return
 	}
 
-	team = new(models.Team)
-	json.Unmarshal(rec.Body.Bytes(), team)
+	User = new(models.User)
+	json.Unmarshal(rec.Body.Bytes(), User)
 
-	assert.Equal(t, team.Name, "testing2")
+	assert.Equal(t, User.Name, "testing2")
 }
 
-func createTeam(e *echo.Echo) *httptest.ResponseRecorder {
-	teamJSON := `{"name": "testing"}`
-	req := httptest.NewRequest(http.MethodPost, "/teams", strings.NewReader(teamJSON))
+func createUser(e *echo.Echo) *httptest.ResponseRecorder {
+	userJSON := `{"name": "testing"}`
+	req := httptest.NewRequest(http.MethodPost, "/users", strings.NewReader(userJSON))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 
 	rec := httptest.NewRecorder()
